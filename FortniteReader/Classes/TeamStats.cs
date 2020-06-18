@@ -5,10 +5,7 @@ namespace FortniteReader.Classes
 {
     public class TeamStats
     {
-        public List<string> Players { get; set; }
-        public uint? TotalKillsInAMatch { get; set; }
-
-
-
+        public List<PlayerInfo> Players { get; set; }
+        public uint? TotalTeamKillsInAMatch { get; set; }
     }
 }

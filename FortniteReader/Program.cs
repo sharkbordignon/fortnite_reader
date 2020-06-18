@@ -89,9 +89,6 @@ namespace FortniteReader
 
                 Console.WriteLine($"======================================================================= ");
             } while (gameTimeInput != "9");
-
-            
-
         }
 
         private static bool IsValidReplay(FortniteReplay replay)
@@ -151,24 +148,37 @@ namespace FortniteReader
             {
                 if (team.PlayerNames.Contains(sharkaum.ToUpper()))
                 {
-                    stats.Players = team.PlayerNames.ToList();
+                    foreach (var player in team.PlayerNames.ToList())
+                    {
+                        stats.Players.Add(GetTeamPlayersInfo(replay, player));
+                    }
                 }
             }
-            stats.TotalKillsInAMatch = replay.PlayerData.FirstOrDefault(x => x.EpicId == sharkaum.ToUpper()).TeamKills;
+            stats.TotalTeamKillsInAMatch = replay.PlayerData.FirstOrDefault(x => x.EpicId == sharkaum.ToUpper()).TeamKills;
 
             return stats;
         }
+
+        private static PlayerInfo GetTeamPlayersInfo(FortniteReplay replay, string EpicId)
+        {
+            var playerInfo = replay.PlayerData.FirstOrDefault(x => x.EpicId == EpicId);
+
+            return new PlayerInfo() {
+                EpicId = playerInfo.EpicId,
+                Kills = playerInfo.Kills
+            };
+        }
+
         private static int GetSeason(DateTime gameTime)
         {
             DateTime Season13Start = new DateTime(2020,06,17,6,0,0);
             if (DateTime.Compare(gameTime, Season13Start) < 0) return 12;
             return 13;
         }
-        private static PlayerInfo SetPlayerInfo(FortniteReplay replay, string playerEpicId)
+        private static PlayerStats SetPlayerInfo(FortniteReplay replay, string playerEpicId)
         {
-            PlayerInfo player = new PlayerInfo(playerEpicId);
+            PlayerStats player = new PlayerStats(playerEpicId);
 
-            //duvidas aki
             player.Accuracy = replay.Stats.Accuracy;
             player.Assists = replay.Stats.Assists;
             player.DamageTaken = replay.Stats.DamageTaken;
