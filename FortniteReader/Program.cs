@@ -148,9 +148,11 @@ namespace FortniteReader
             {
                 if (team.PlayerNames.Contains(sharkaum.ToUpper()))
                 {
+                    stats.Players = new List<PlayerInfo>();
                     foreach (var player in team.PlayerNames.ToList())
                     {
-                        stats.Players.Add(GetTeamPlayersInfo(replay, player));
+                        var playerInfo = GetTeamPlayersInfo(replay, player);
+                        if(player != null) stats.Players.Add(playerInfo);
                     }
                 }
             }
@@ -162,11 +164,17 @@ namespace FortniteReader
         private static PlayerInfo GetTeamPlayersInfo(FortniteReplay replay, string EpicId)
         {
             var playerInfo = replay.PlayerData.FirstOrDefault(x => x.EpicId == EpicId);
-
-            return new PlayerInfo() {
-                EpicId = playerInfo.EpicId,
-                Kills = playerInfo.Kills
-            };
+            if(playerInfo != null)
+            {
+                int elimination = 0;
+                if(playerInfo.Kills != null) elimination = (int)playerInfo.Kills;
+                return new PlayerInfo()
+                {
+                    EpicId = playerInfo.EpicId,
+                    Kills = elimination
+                };
+            }
+            return null;
         }
 
         private static int GetSeason(DateTime gameTime)
